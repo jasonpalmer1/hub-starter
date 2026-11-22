@@ -1,0 +1,211 @@
+# path	lines	purpose	pattern  (every shipped file; prepush fails if this and git differ)
+.gitignore	5	Keeps build junk, secrets and logs out of git	core
+.gitattributes	2	Forces LF line endings on shell and python files so Windows checkouts do not break them	core
+MANIFEST.txt	-	This table: every file that ships	core
+README.md	97	Start here: what it is, 5-minute install, what it never does	docs
+VERSION	1	Version number	core
+LICENSE	21	MIT License (interim holder: hub-starter contributors)	core
+docs/ADOPT-ONE-PIECE.md	259	Take one pattern at a time: install and try each on its own	docs
+docs/ALWAYS-RUNNING.md	82	Keep work going while you are away: set up the feed loop, read the doctor lines, pause it	docs
+docs/FIRST-TICKET.md	77	Walk one ticket end to end: plan, build, proof, review	docs
+docs/GLOSSARY.md	25	Plain meanings for the words the guides use (lane, hub, brief, breaker)	docs
+docs/IMPROVEMENT-LOOP.md	66	The measure-then-fix method and the plan template (problem, cause, fix, proof, must block, must allow)	docs
+docs/LESSONS.md	60	Why the pieces are built the way they are (general lessons)	docs
+docs/PATTERN-MATRIX.md	59	Table: pattern, files, tests, hooks, dependencies	docs
+docs/START-HERE.md	85	TODO: purpose	core
+docs/TROUBLESHOOTING.md	98	Symptom and fix for the common problems	docs
+docs/WINDOWS.md	201	Windows 11 guide: run the kit inside WSL2, step by step, with what you should see	docs
+docs/test.sh	7	Runs the docs checks	docs
+docs/test_docs.py	169	16 tests: matrix matches pattern.json and MANIFEST, mentioned paths, commands and doctor rows exist, no machine or private hub paths, no real ticket numbers, loop docs linked, Windows guide linked and honest	docs
+install.sh	13	Installer: copies patterns into ~/.claude/hubkit, never overwrites, never writes settings.json	install
+kit/HOOKS-VERIFIED.md	34	Which Claude Code hook events and fields the kit relies on, and what was checked	kit
+kit/commands/hub.md	92	Generic hub protocol: intake, delegation, gates, proof, approval	kit
+kit/settings.snippet.json	23	Hook entries to merge into your settings.json yourself	kit
+kit/settings.snippet.loop.json	8	Optional Stop hook entry for the work-loop Stop arm (off by default)	kit
+kit/templates/CLAUDE.template.md	38	Blank project CLAUDE.md to fill in	kit
+kit/templates/OPERATOR.template.md	62	Blank operator contract (how you want the AI to work with you) to fill in	kit
+kit/test.sh	11	Runs the kit file checks in a scratch HOME	kit
+kit/test_kit.py	148	11 tests: snippet valid and points at shipped hooks, templates blank, hub.md rules, no leftovers	kit
+patterns/board-keeper/README.md	69	Pattern guide: the rules, files, install, use, test	board-keeper
+patterns/board-keeper/board_keeper.py	436	Card board keeper: fix, forward moves, flags, caps, kill switch, move log, undo	board-keeper
+patterns/board-keeper/pattern.json	28	Pattern metadata: files, hook, env, needs	board-keeper
+patterns/board-keeper/test.sh	68	Runs the tests in a scratch HOME; --mutate breaks each guard	board-keeper
+patterns/board-keeper/test_board_keeper.py	424	21 tests: fix and move rules, caps, kill switch, holds, undo, hostile ids	board-keeper
+patterns/card-guard/README.md	61	Pattern guide: what it fixes, what it refuses, install, use, test	card-guard
+patterns/card-guard/card_guard.py	126	Card guard: refuses engineering text, missing proof or consequence, Yes/No-only options	card-guard
+patterns/card-guard/pattern.json	27	Pattern metadata: files, hook, env, needs	card-guard
+patterns/card-guard/test.sh	63	Runs the tests in a scratch HOME; --mutate breaks each guard	card-guard
+patterns/card-guard/test_card_guard.py	252	16 tests: each refusal rule, cap, retry, answered duplicate, hostile inputs	card-guard
+patterns/card-guard/worker_card.py	194	Worker card filer: cap of 2 per run, answered-decision refusal, recommended option first	card-guard
+patterns/deadman/README.md	104	Pattern guide: what it fixes, install, use, test	deadman
+patterns/deadman/deadman.py	339	Heartbeat tool: beat on success, check raises one alarm when a job goes quiet	deadman
+patterns/deadman/pattern.json	15	Pattern metadata: files, hook, env, needs	deadman
+patterns/deadman/test.sh	110	Runs the tests in a scratch HOME; --mutate breaks each guard	deadman
+patterns/deadman/test_deadman.py	495	50 tests: stale, missing, corrupt, future, repeat window, notify, retire, safety	deadman
+patterns/diff-triggers/README.md	50	Pattern guide: what it fixes, install, use, optional Verified line, test	core
+patterns/diff-triggers/base_read.py	49	Prints a file as it is at the base commit; never falls back to the tip copy	core
+patterns/diff-triggers/pattern.json	14	Pattern metadata: files, env, needs	core
+patterns/diff-triggers/test.sh	58	Runs the tests in a scratch HOME; --mutate breaks each rule	core
+patterns/diff-triggers/test_diff_triggers.py	205	20 tests: rows match, rules-edit note, refused tables, base read miss, unsafe paths, symlink	core
+patterns/diff-triggers/trigger_check.py	208	Observe-only: prints which past-incident rows a diff matches; never blocks	core
+patterns/diff-triggers/triggers.example.txt	6	Example rows table (generic incidents) to copy and edit	core
+patterns/disk-guard/README.md	78	Pattern guide: what it fixes, install, use, test	disk-guard
+patterns/disk-guard/disk-guard.py	131	Read-only free-space verdict (OK, WARN, CRIT) plus running build count	disk-guard
+patterns/disk-guard/pattern.json	17	Pattern metadata: files, hook, env, needs	disk-guard
+patterns/disk-guard/test.sh	60	Runs the tests in a scratch HOME; --mutate breaks each guard	disk-guard
+patterns/disk-guard/test_disk_guard.py	142	15 tests: thresholds, unreadable disk, build counting, read-only	disk-guard
+patterns/doctor/README.md	107	Pattern guide: what it fixes, install, use, test	doctor
+patterns/doctor/doctor.py	531	Read-only hub health check with exact fixes and a --paste scrub	doctor
+patterns/doctor/pattern.json	17	Pattern metadata: files, hook, env, needs	doctor
+patterns/doctor/test.sh	114	Runs the tests in a scratch HOME; --mutate breaks each guard	doctor
+patterns/doctor/test_doctor.py	634	67 tests: break one thing, exactly that line flips; loop tick, Stop arm and register rows; paste scrub; read-only	doctor
+patterns/dup-worker-check/README.md	73	Pattern guide: what it fixes, install, use, test	core
+patterns/dup-worker-check/dup-worker-check.py	145	Finds live workers holding the same ticket as a new brief	core
+patterns/dup-worker-check/dup-worker-hook.py	72	PreToolUse hook that refuses a duplicate worker (DUP-OK overrides)	core
+patterns/dup-worker-check/pattern.json	23	Pattern metadata: files, hook, env, needs	core
+patterns/dup-worker-check/test.sh	85	Runs the tests in a scratch HOME; --mutate breaks each guard	core
+patterns/dup-worker-check/test_dup_worker.py	274	35 tests: live and stale holders, primary ids, override, fail-open	core
+patterns/failure-register/README.md	66	Pattern guide: the repeat rule, input format, CAUSE column, what it never does	core
+patterns/failure-register/failure_register.py	423	Read-only register of repeated failures; writes the page and a heartbeat	core
+patterns/failure-register/fixtures/replay-failures.txt	9	Invented replay log: 3 build timeouts, 2 deploy failures, 3 reasonless syncs	core
+patterns/failure-register/pattern.json	23	Pattern metadata: files, env, needs	core
+patterns/failure-register/record_failure.py	65	Appends one failure or pass to failures.jsonl, credentials and paths removed	core
+patterns/failure-register/test.sh	101	Runs the tests in a scratch HOME; --mutate breaks each rule	core
+patterns/failure-register/test_failure_register.py	501	51 tests: threshold, grouping, rotation, corrupt input, empty input, read-only, leaks, reopen	core
+patterns/gate-agents/README.md	57	Pattern guide: what it fixes, install, use, test	gate-agents
+patterns/gate-agents/bottleneck.md	50	TODO: purpose	core
+patterns/gate-agents/bug-gate.md	41	Agent: adversarial review of the exact diff, PASS or FAIL, writes VERDICT.md	gate-agents
+patterns/gate-agents/check-checker.md	41	TODO: purpose	core
+patterns/gate-agents/judge.md	20	TODO: purpose	core
+patterns/gate-agents/pattern.json	15	Pattern metadata: files, agents, env, needs	gate-agents
+patterns/gate-agents/planner.md	26	Agent: writes the plan before any new scope	gate-agents
+patterns/gate-agents/playtester.md	40	Agent: plays the product as a stranger on a phone	gate-agents
+patterns/gate-agents/test.sh	44	Runs the tests in a scratch HOME; --mutate damages each file	gate-agents
+patterns/gate-agents/test_gate_agents.py	78	8 tests: frontmatter, read-only tools, no personal paths, key rules present	gate-agents
+patterns/gate-metrics/README.md	52	Pattern guide: what it reads, the headline number, never-breaks-the-spawn	core
+patterns/gate-metrics/gate_metrics.py	132	Read-only: first-gate FAIL share from VERDICT.md files plus spawn counts from the index	core
+patterns/gate-metrics/pattern.json	15	Pattern metadata: files, env, needs	core
+patterns/gate-metrics/test.sh	59	Runs the tests in a scratch HOME; --mutate breaks each rule	core
+patterns/gate-metrics/test_gate_metrics.py	193	15 tests: share maths, rounds, ignored files, symlink, corrupt index, target exit, bug-gate.md format	core
+patterns/groomer/README.md	60	Pattern guide: what it fixes, modes, install, use, test	groomer
+patterns/groomer/groomer.py	317	Plain-rule groomer: finish line, kind and grade suggestions, repeat finder, VERIFY proposal; off/shadow/live	groomer
+patterns/groomer/pattern.json	24	Pattern metadata: files, hook, env, needs	groomer
+patterns/groomer/test.sh	68	Runs the tests in a scratch HOME; --mutate breaks each guard	groomer
+patterns/groomer/test_groomer.py	207	15 tests: modes, finish lines, folding rules, protected sources, hostile titles, counts-only log	groomer
+patterns/improve/README.md	118	Pattern guide: sources, refusal reasons, measured closure, limits	core
+patterns/improve/bug_sweep.py	360	Bug sweep: runs the operator's smoke command on unswept merged work; a failure becomes a candidate	core
+patterns/improve/improve.py	679	Empty-queue policy: capped, evidence-backed candidates; closes only on its own before/after reading	core
+patterns/improve/pattern.json	30	Pattern metadata: files, env, needs	core
+patterns/improve/test.sh	176	Runs the tests in a scratch HOME; --mutate breaks each guard	core
+patterns/improve/test_bug_sweep.py	489	Sweep tests: block and allow rules, lock race, injection, symlink, hang, corrupt config	core
+patterns/improve/test_improve.py	680	69 tests: every block and allow rule, closure, caps, injection, symlink, flapping	core
+patterns/lane-lock/README.md	101	Pattern guide: what it fixes, install, use, test	lane-lock
+patterns/lane-lock/lane-lock.py	941	One-owner-per-lane lock with a failure breaker: claim, release, force-release, record-fail, reset	lane-lock
+patterns/lane-lock/pattern.json	19	Pattern metadata: files, env, needs	lane-lock
+patterns/lane-lock/test.sh	199	Runs the tests in a scratch HOME; --mutate breaks each guard	lane-lock
+patterns/lane-lock/test_lane_lock.py	920	74 tests: ownership, process identity, corrupt records, breaker, paths, native-Windows refusal	lane-lock
+patterns/ledger/README.md	89	Pattern guide: what it fixes, install, use, test	ledger
+patterns/ledger/ledger	394	ledger command-line tool with beginner --help	ledger
+patterns/ledger/ledger-banner-hook.py	120	Optional prompt hook that shows the ledger banner	ledger
+patterns/ledger/ledger_lib.py	450	Ledger library: read, fold, write, id allocation, done gate	ledger
+patterns/ledger/pattern.json	20	Pattern metadata: files, hook, env, needs	ledger
+patterns/ledger/test.sh	59	Runs the tests in a scratch HOME; --mutate breaks each guard	ledger
+patterns/ledger/test_ledger.py	586	66 tests: library, command line, hook, law-mix	ledger
+patterns/memory/ARCHIVE.template.md	7	TODO: purpose	core
+patterns/memory/MEMORY-RULES.md	52	TODO: purpose	core
+patterns/memory/MEMORY.template.md	14	TODO: purpose	core
+patterns/memory/README.md	0	TODO: purpose	core
+patterns/memory/checkpoint.md	35	TODO: purpose	core
+patterns/memory/compact_pickup.py	53	TODO: purpose	core
+patterns/memory/conversations_index.template.md	6	TODO: purpose	core
+patterns/memory/log.md	37	TODO: purpose	core
+patterns/memory/memory_init.py	75	TODO: purpose	core
+patterns/memory/pattern.json	27	TODO: purpose	core
+patterns/memory/pre_compact_stub.py	108	TODO: purpose	core
+patterns/memory/test.sh	48	TODO: purpose	core
+patterns/memory/test_memory.py	172	TODO: purpose	core
+patterns/model-guard/README.md	68	Pattern guide: what it fixes, install, use, test	core
+patterns/model-guard/gate_round_cap.py	302	Helper: gate round cap and many-items warning, imported by model-guard.py	core
+patterns/model-guard/model-guard.py	349	PreToolUse hook: refuses Agent/Task calls with no model; indexes builder and bug-gate spawns	core
+patterns/model-guard/pattern.json	22	Pattern metadata: files, hook, env, needs	core
+patterns/model-guard/selfcheck_admit.py	215	Helper: bug-gate admission, warns (later blocks) when a gate brief names a commit with no green self-check record, imported by model-guard.py	core
+patterns/model-guard/test.sh	118	Runs the tests in a scratch HOME; --mutate breaks each guard	core
+patterns/model-guard/test_model_guard.py	502	57 tests: block rules, ticket lock, allow list, workflow advisory, fail-closed spawns, report path, gate index (never blocks)	core
+patterns/model-guard/test_selfcheck_admit.py	49	Tests for selfcheck_admit.py in a scratch git repo: record lookup, warn-only window, fail-open	core
+patterns/report-gate/README.md	81	Pattern guide: what it fixes, install, use, test	core
+patterns/report-gate/pattern.json	20	Pattern metadata: files, hook, env, needs	core
+patterns/report-gate/report-gate.py	383	SubagentStop hook: worker cannot stop without its report file	core
+patterns/report-gate/test.sh	60	Runs the tests in a scratch HOME; --mutate breaks each guard	core
+patterns/report-gate/test_report_gate.py	361	36 tests: proof gate, ticket-lock release, exemption, one-refusal rule, failure rules	core
+patterns/schedule-examples/README.md	78	Pattern guide: what it fixes, install, use, test	schedule-examples
+patterns/schedule-examples/crontab.example.txt	17	Cron lines: a job that beats on success and the separate watcher	schedule-examples
+patterns/schedule-examples/crontab.loop.example.txt	12	The four cron lines that run the work loop (same as docs/ALWAYS-RUNNING.md), with a commented notify line	schedule-examples
+patterns/schedule-examples/launchd-deadman-check.plist.example	39	macOS launchd watcher that runs the deadman check every 15 minutes	schedule-examples
+patterns/schedule-examples/launchd-job.plist.example	33	macOS launchd job that beats only when the job succeeds	schedule-examples
+patterns/schedule-examples/pattern.json	13	Pattern metadata: files, hook, env, needs	schedule-examples
+patterns/schedule-examples/test.sh	57	Runs the tests in a scratch HOME; --mutate breaks each guard	schedule-examples
+patterns/schedule-examples/test_schedule_examples.py	231	19 tests: files parse, rules hold, cron command beats only on success	schedule-examples
+patterns/schedule-examples/notify-windows.example.sh	39	Show a Windows toast for an alarm from WSL2; alarm text goes in as data, never as code	schedule-examples
+patterns/schedule-examples/windows-keepalive.task.xml	38	Windows Task Scheduler task: keep WSL2 Ubuntu running after logon so cron fires	schedule-examples
+patterns/secret-scan-precommit/README.md	90	Pattern guide: what it fixes, install, use, test	secret-scan-precommit
+patterns/secret-scan-precommit/install-hook.sh	26	Installs the pre-commit hook; never overwrites an existing hook	secret-scan-precommit
+patterns/secret-scan-precommit/pattern.json	16	Pattern metadata: files, env, needs	secret-scan-precommit
+patterns/secret-scan-precommit/secret-scan.py	288	Pre-commit scanner: blocks staged secrets (stores from env); fails closed on a crash	secret-scan-precommit
+patterns/secret-scan-precommit/test.sh	138	Runs the tests in a scratch HOME; --mutate breaks each guard	secret-scan-precommit
+patterns/secret-scan-precommit/test_secret_scan.py	596	50 tests: detection, speed on long lines, flag guards, git-config and binary-file evasion, allowlist, hook install by real commits, fail-closed	secret-scan-precommit
+patterns/sweep/README.md	47	Pattern guide: live-owner list format, unknown is not dead, wakes, safety	core
+patterns/sweep/pattern.json	29	Pattern metadata: files, env, needs	core
+patterns/sweep/sweep.py	325	Reports stale and dead-owner tickets; returns a dead lane's tickets to the queue; hold	core
+patterns/sweep/test.sh	93	Runs the tests in a scratch HOME; --mutate breaks each rule	core
+patterns/sweep/test_sweep.py	456	28 tests: dead and alive owners, lane-1 vs lane-10, unknown liveness, holds, wakes, concurrency	core
+patterns/ticket-lock/README.md	80	Pattern guide: what it fixes, install, use, test	core
+patterns/ticket-lock/pattern.json	20	Pattern metadata: files, env, needs (no hook of its own)	core
+patterns/ticket-lock/test.sh	97	Runs the tests in a scratch HOME; --mutate breaks each guard	core
+patterns/ticket-lock/test_ticket_lock.py	510	49 tests: refuse a held ticket, gates exempt, handoff, DUP-OK, TTL, re-dispatch, release, alarms, CLI	core
+patterns/ticket-lock/ticket-lock.py	34	Command line: release a stuck lock, list locks	core
+patterns/ticket-lock/ticket_lock.py	503	Library: take a lock at spawn, free it at finish, alarm on a closed ticket that was not briefed	core
+patterns/turn-cap-builder/README.md	71	Pattern guide: what it fixes, install, use, test	core
+patterns/turn-cap-builder/builder.md	33	Builder agent definition with the turn-cap hooks and handoff rule	core
+patterns/turn-cap-builder/pattern.json	20	Pattern metadata: files, agent, env, needs	core
+patterns/turn-cap-builder/test.sh	64	Runs the tests in a scratch HOME; --mutate breaks each guard	core
+patterns/turn-cap-builder/test_turn_cap.py	341	27 tests: caps, write allowance, exemptions, concurrency, fail-open, prune	core
+patterns/turn-cap-builder/turn-cap.py	195	Hook: counts a worker's tool calls, nudges at 90, blocks at 115	core
+patterns/verify-watch/README.md	52	Pattern guide: what it fixes, what it refuses, install, use, test	verify-watch
+patterns/verify-watch/pattern.json	24	Pattern metadata: files, hook, env, needs	verify-watch
+patterns/verify-watch/test.sh	54	Runs the tests in a scratch HOME; --mutate breaks each guard	verify-watch
+patterns/verify-watch/test_verify_watch.py	155	11 tests: grammar, hostile urls, allowlist, always-pass markers, suggestion, day cap	verify-watch
+patterns/verify-watch/verify_watch.py	213	VERIFY line grammar, host allowlist, emit check, suggestion, per-day cap	verify-watch
+patterns/wake-gate/README.md	42	Pattern guide: the WAKE or LOG rule, state, failure behaviour	core
+patterns/wake-gate/pattern.json	23	Pattern metadata: files, env, needs	core
+patterns/wake-gate/test.sh	61	Runs the tests in a scratch HOME; --mutate breaks each rule	core
+patterns/wake-gate/test_wake_gate.py	248	27 tests: new crit, 24h repeat, info/warn, dead lane, corrupt/unwritable state, newline keys, clock	core
+patterns/wake-gate/wake_gate.py	186	Decides WAKE or LOG for a finding; once per key per 24 h	core
+patterns/work-loop/README.md	96	Pattern guide: next, lanes, tick, hold, starvation	core
+patterns/work-loop/pattern.json	30	Pattern metadata: files, env, needs	core
+patterns/work-loop/stop_arm.py	113	Optional Stop hook: continues a registered lane with its next ticket, capped at 3	core
+patterns/work-loop/test.sh	140	Runs the tests in a scratch HOME; --mutate breaks each guard	core
+patterns/work-loop/test_stop_arm.py	285	Tests for the Stop arm: caps, claim, pause, unregistered, fail-open	core
+patterns/work-loop/test_tick.py	403	Tests for tick, touch, lane, hold, starvation and wake-gate wiring	core
+patterns/work-loop/test_work_loop.py	214	Tests for next: eligibility, ordering, offer memory, flock	core
+patterns/work-loop/work_loop.py	674	Hands an idle lane its next ticket; tick keeps lanes fed	core
+tools/e2e.sh	112	Fresh-machine 5-step scenario in a scratch HOME (part of test-all --core)	core
+tools/githooks/pre-commit	3	Git hook: refuses a commit whose author or committer is not the kit identity	core
+tools/githooks/pre-merge-commit	3	Git hook: refuses a merge commit whose identity is not the kit identity	core
+tools/history-allow.txt	10	Reviewed git-history blobs the scanner may skip (exact content hash, with reason)	core
+tools/history-base.txt	3	History baseline: no pin yet (single-commit history, scanned in full); a reviewer may pin a commit later	core
+tools/identity-allow.txt	6	Frozen list of commits excused from the identity rule only; empty (history is one commit)	core
+tools/install-hooks.sh	9	Points a clone at tools/githooks so the identity guard runs on commit and merge, and sets the clone identity (user.name and user.email) to hub-starter	core
+tools/install.py	488	Installer logic: pattern selection, safe copy, snippet generation, local install log	install
+tools/mutation-check.sh	120	Breaks each scanner rule in a temp copy; tests must fail	core
+tools/prepush-check.sh	42	The gate: run before sharing the repo	core
+tools/scan.py	640	Leak scanner (secrets, paths, names, identity)	core
+tools/ship-list.sh	3	Prints or checks this table	core
+tools/ship-slice.sh	40	Ship a finished slice: tests, prepush, fast-forward-only push, verify remote equals HEAD	core
+tools/ship_list.py	69	Implementation of ship-list.sh	core
+tools/test-all.sh	18	Runs the kit's test suites (--core is the fast set, --full adds the slow hygiene tier)	core
+tools/test-install.sh	53	Runs the installer tests in a scratch HOME; --mutate breaks each guard	install
+tools/test-scan-hygiene.sh	85	Tests the scanner tooling: no __pycache__ left behind; a failed mutant layout, a lost, duplicated or missing worker result all fail the mutation run (small subsets, runs in --full)	core
+tools/test-scan.sh	8	Runs the scanner tests	core
+tools/test-ship-slice.sh	86	Tests ship-slice against a temp bare remote: non-ff, dirty, planted path, force flags, remote race	core
+tools/test_install.py	582	53 tests: fresh install, second run changes nothing, settings.json untouched, kept files, dry run, pattern.json checks, native-Windows stop	install
+tools/test_scan.py	1123	Scanner tests: one per leak type	core

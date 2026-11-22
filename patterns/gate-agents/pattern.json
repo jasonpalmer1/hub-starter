@@ -1,0 +1,15 @@
+{
+  "name": "gate-agents",
+  "core": true,
+  "summary": "Six reviewer agents: planner (plan first), bug-gate (adversarial review of the exact diff), playtester (stranger on a phone), bottleneck (finds the real constraint), judge (final ruling), check-checker (do we need this check at all).",
+  "files": ["planner.md", "bug-gate.md", "playtester.md", "bottleneck.md", "judge.md", "check-checker.md"],
+  "agents": ["planner.md", "bug-gate.md", "playtester.md", "bottleneck.md", "judge.md", "check-checker.md"],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (plans, gate verdicts and playtests are written under it)"
+  },
+  "needs": ["Claude Code with subagents", "playtester only: a headless browser you supply"],
+  "depends_on": [],
+  "notes": "The builder agent ships in the turn-cap-builder pattern. Agent files are copied to ~/.claude/agents only if the name is free.",
+  "test": "bash patterns/gate-agents/test.sh"
+}

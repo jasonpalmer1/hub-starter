@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  EXAMPLE (macOS): the watcher. Every 15 minutes it checks that every registered job
+  has beaten recently, and raises one alarm for any that has not.
+  Keep it as its OWN launchd job, separate from the jobs it watches: a dead job cannot
+  report itself.
+  1. Copy to ~/Library/LaunchAgents/com.example.hubkit.deadman-check.plist
+  2. Replace __HOME__ with your home folder.
+  3. To get a message when an alarm fires, point HUBKIT_NOTIFY_CMD below at your own script
+     (full path, launchd does not expand ~). Delete those three lines if you do not want one:
+     alarms still land in state/alarms.log.
+  4. First beat each job once by hand with the max-age option (see the deadman README), then:
+     launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.hubkit.deadman-check.plist
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.example.hubkit.deadman-check</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>__HOME__/.claude/hubkit/deadman/deadman.py</string>
+        <string>check</string>
+        <string>--all</string>
+    </array>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>HUBKIT_NOTIFY_CMD</key>
+        <string>__HOME__/bin/your-notify-script</string>
+    </dict>
+    <key>StartInterval</key>
+    <integer>900</integer>
+    <key>StandardOutPath</key>
+    <string>__HOME__/.claude/hubkit/state/deadman-check.log</string>
+    <key>StandardErrorPath</key>
+    <string>__HOME__/.claude/hubkit/state/deadman-check.log</string>
+</dict>
+</plist>

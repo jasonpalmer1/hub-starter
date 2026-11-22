@@ -1,0 +1,27 @@
+{
+  "name": "card-guard",
+  "core": false,
+  "summary": "Refuses a decision card written in engineering text (ids, hashes, file names, raw JSON, no proof, no consequence, Yes/No-only options) and lets a worker file its own card with a per-run cap.",
+  "files": [
+    "card_guard.py",
+    "worker_card.py"
+  ],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (cards go to $HUBKIT_HOME/state/cards.jsonl)",
+    "WORKER_CARD_STATE": "optional: where the per-run cap bookkeeping lives",
+    "WORKER_CARD_ANSWERS": "optional: answered-decisions file, default $HUBKIT_HOME/state/answers.jsonl",
+    "WORKER_CARD_QUEUE": "optional: cards file, default $HUBKIT_HOME/state/cards.jsonl",
+    "WORKER_CARD_RUN": "optional: run key for the cap (default: session id plus ticket)"
+  },
+  "needs": [
+    "python3 (3.9 or newer)",
+    "macOS or Linux (uses fcntl)"
+  ],
+  "depends_on": [],
+  "pairs_well_with": [
+    "report-gate",
+    "ledger"
+  ],
+  "test": "bash patterns/card-guard/test.sh"
+}

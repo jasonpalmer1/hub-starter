@@ -1,0 +1,6 @@
+# Commits whose recorded author/committer is a personal identity instead of `hub-starter`, excused from the
+# `identity` rule ONLY. One full 40-char commit id per line, then the reason.
+# This list is EMPTY: the published history is a single commit authored as `hub-starter`.
+# FROZEN: tools/test_scan.py pins this list (count and hash). Adding a line needs a reviewed edit of that pin
+# in the same commit, and the identity-guard hook (tools/githooks) refuses any new such commit.
+# A line whose commit is not in history is itself a finding (identity-allow-stale).

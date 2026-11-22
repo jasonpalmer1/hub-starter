@@ -1,0 +1,396 @@
+#!/usr/bin/env python3
+"""ledger: an append-only, proof-backed to-do list for you and your AI workers.
+
+Run `ledger --help` for the beginner guide. Storage and the file format are
+described in ledger_lib.py.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from ledger_lib import (  # noqa: E402
+    LEDGER_PATH,
+    VALID_ASKED_BY,
+    VALID_STATUSES,
+    append_event,
+    banner_lines,
+    claim_actor,
+    fold,
+    mix_counts,
+    mix_line,
+    has_done_gate_proof,
+    ledger_lock,
+    filer,
+    next_id,
+    now_iso,
+    read_events,
+    surface_lines,
+    today_str,
+    unreviewed_issues,
+)
+
+
+def cmd_add(args: argparse.Namespace) -> int:
+    title = args.title.strip()
+    if len(title) > 60:
+        title = title[:57] + "..."
+    with ledger_lock():
+        events = read_events()
+        eid = next_id(events)
+        event = {
+            "ts": now_iso(),
+            "id": eid,
+            "event": "created",
+            "title": title,
+            "asked_by": args.asked_by,
+            "asked_on": today_str(),
+            "owner": args.owner or "unowned",
+            "trigger": "",
+            "project": args.project,
+            "filed_by": filer(),
+        }
+        append_event(event)
+    print(eid)
+    return 0
+
+
+def cmd_status(args: argparse.Namespace) -> int:
+    events = read_events()
+    records = fold(events)
+    rec = records.get(args.id)
+    if rec is None:
+        print(f"ledger: unknown id {args.id}", file=sys.stderr)
+        return 1
+
+    if args.new_status == "done" and not has_done_gate_proof(rec):
+        # A metric-claim proof alone does not satisfy the gate; see
+        # ledger_lib.has_done_gate_proof().
+        reason = (
+            "only metric-claim/metric-claim-verdict proof recorded (a claim is not proof)"
+            if rec["proof"] else "no proof recorded yet"
+        )
+        print(
+            f"ledger: refusing to mark {args.id} done - {reason}. "
+            f"Run `ledger proof {args.id} <type> <ref>` first.",
+            file=sys.stderr,
+        )
+        return 1
+
+    event = {
+        "ts": now_iso(),
+        "id": args.id,
+        "event": "status",
+        "status": args.new_status,
+    }
+    if args.new_status == "active":
+        # Record WHO is claiming, not just when. No extra field is written
+        # outside a Claude Code process.
+        actor = claim_actor()
+        if actor:
+            event["claimed_by"] = actor
+    with ledger_lock():
+        append_event(event)
+    print(f"{args.id}: {rec['status']} -> {args.new_status}")
+    return 0
+
+
+def cmd_proof(args: argparse.Namespace) -> int:
+    events = read_events()
+    records = fold(events)
+    if args.id not in records:
+        print(f"ledger: unknown id {args.id}", file=sys.stderr)
+        return 1
+    proof = {"type": args.type, "ref": args.ref}
+    if args.note:
+        proof["note"] = args.note
+    with ledger_lock():
+        append_event({
+            "ts": now_iso(),
+            "id": args.id,
+            "event": "proof",
+            "proof": proof,
+        })
+    print(f"{args.id}: proof recorded ({args.type}: {args.ref})")
+    return 0
+
+
+def cmd_ack(args: argparse.Namespace) -> int:
+    events = read_events()
+    records = fold(events)
+    if args.id not in records:
+        print(f"ledger: unknown id {args.id}", file=sys.stderr)
+        return 1
+    with ledger_lock():
+        append_event({
+            "ts": now_iso(),
+            "id": args.id,
+            "event": "ack",
+            "operator_ack": True,
+        })
+    print(f"{args.id}: acked")
+    return 0
+
+
+def cmd_owner(args: argparse.Namespace) -> int:
+    """Set an item's owner without touching its status.
+
+    `claim` and `reassign` record who holds the item now (same event, two
+    names); `release` records that nobody does.
+    """
+    events = read_events()
+    records = fold(events)
+    if args.id not in records:
+        print(f"ledger: unknown id {args.id}", file=sys.stderr)
+        return 1
+    owner = "unowned" if args.action == "release" else args.owner
+    with ledger_lock():
+        append_event({
+            "ts": now_iso(),
+            "id": args.id,
+            "event": "owner",
+            "owner": owner,
+        })
+    print(f"{args.id}: owner -> {owner}")
+    return 0
+
+
+def cmd_note(args: argparse.Namespace) -> int:
+    """Attach a free-text note to an item without changing its status."""
+    events = read_events()
+    records = fold(events)
+    if args.id not in records:
+        print(f"ledger: unknown id {args.id}", file=sys.stderr)
+        return 1
+    with ledger_lock():
+        append_event({
+            "ts": now_iso(),
+            "id": args.id,
+            "event": "note",
+            "note": args.text,
+        })
+    print(f"{args.id}: note added")
+    return 0
+
+
+def cmd_reviewed(args: argparse.Namespace) -> int:
+    """Mark an item's current schema issues as reviewed, with a reason.
+
+    Clears them from the banner's "needs review" count only; the record keeps
+    every issue, and any later bad event re-flags the item.
+    """
+    events = read_events()
+    records = fold(events)
+    rec = records.get(args.id)
+    if rec is None:
+        print(f"ledger: unknown id {args.id}", file=sys.stderr)
+        return 1
+    if not unreviewed_issues(rec):
+        print(f"ledger: {args.id} has no unreviewed schema issues; nothing to review", file=sys.stderr)
+        return 1
+    if not args.note.strip():
+        print("ledger: --note must say why the issues are settled", file=sys.stderr)
+        return 1
+    with ledger_lock():
+        append_event({
+            "ts": now_iso(),
+            "id": args.id,
+            "event": "reviewed",
+            "note": args.note,
+        })
+    print(f"{args.id}: {len(unreviewed_issues(rec))} schema issue(s) marked reviewed")
+    return 0
+
+
+def cmd_list(args: argparse.Namespace) -> int:
+    records = fold(read_events())
+    items = sorted(records.values(), key=lambda r: r["id"])
+    if args.status:
+        items = [r for r in items if r["status"] == args.status]
+    if args.json:
+        print(json.dumps(items, indent=2, ensure_ascii=False))
+        return 0
+    if not items:
+        print("(no items)")
+        return 0
+    for r in items:
+        proof_flag = f" proof:{len(r['proof'])}" if r["proof"] else ""
+        print(f"{r['id']}  [{r['status']}]{proof_flag}  {r['title']}  "
+              f"(owner: {r['owner']}, asked_by: {r['asked_by']})")
+    return 0
+
+
+def cmd_surface(args: argparse.Namespace) -> int:
+    records = fold(read_events())
+    lines = surface_lines(records)
+    if not lines:
+        print("(nothing to surface)")
+        return 0
+    for line in lines:
+        print(line)
+    return 0
+
+
+def cmd_triage(args: argparse.Namespace) -> int:
+    with ledger_lock():
+        records = fold(read_events())
+        if args.id not in records:
+            raise ValueError(f"No such item: {args.id}")
+        ev = {"ts": now_iso(), "id": args.id, "event": "triage", "class": args.klass}
+        if args.size:
+            ev["size"] = args.size
+        append_event(ev)
+    print(f"{args.id}: triage class {args.klass}")
+    return 0
+
+
+def cmd_mix(args: argparse.Namespace) -> int:
+    records = fold(read_events())
+    if args.json:
+        print(json.dumps({"mix": mix_counts(records)}, ensure_ascii=False))
+    else:
+        print(mix_line(records))
+    return 0
+
+
+def cmd_banner(args: argparse.Namespace) -> int:
+    records = fold(read_events())
+    for line in banner_lines(records):
+        print(line)
+    return 0
+
+
+HELP_EPILOG = """\
+WHAT THIS IS
+  A list of things that need doing. Each thing is an "item" with an id like
+  L-0001. Nothing is ever deleted: every change is a new line added to one
+  file, so you can always see what happened and when.
+
+THE RULE THAT MATTERS
+  An item cannot be marked done until you attach proof (a file, a command
+  output, a link, a commit). "Done" without proof is just a claim.
+
+YOUR FIRST FIVE MINUTES
+  ledger add "write the hello file"          # prints the new id, e.g. L-0001
+  ledger status L-0001 active                # someone is working on it
+  ledger status L-0001 done                  # REFUSED: no proof yet
+  ledger proof L-0001 file ./hello.txt       # attach proof (type, then ref)
+  ledger status L-0001 done                  # now it works
+  ledger list                                # see everything
+  ledger banner                              # two-line summary
+  ledger triage L-0001 urgent --size S       # classify: urgent / important / low-hanging
+  ledger mix                                 # items per class (others: unclassified)
+
+STATUSES
+  open            nobody has started it
+  active          someone is working on it right now
+  needs-operator  stuck until YOU (the human) answer something
+  done            finished, with proof
+  dropped         abandoned on purpose
+
+WHERE THE DATA LIVES
+  $LEDGER_PATH if set, otherwise $HUBKIT_HOME/state/ledger.jsonl
+  ($HUBKIT_HOME defaults to ~/.claude/hubkit). Set LEDGER_PATH to a scratch
+  file to experiment without touching your real list.
+"""
+
+
+def build_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(
+        prog="ledger",
+        description="Proof-backed open-items ledger: add items, attach proof, close them.",
+        epilog=HELP_EPILOG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    sub = p.add_subparsers(dest="command", metavar="command")
+
+    p_add = sub.add_parser("add", help="Add a new item (prints its id)")
+    p_add.add_argument("title", help="short description, shortened past 60 characters")
+    p_add.add_argument("--asked-by", choices=VALID_ASKED_BY, default="hub",
+                       help="who asked for it (default: hub)")
+    p_add.add_argument("--project", default=None, help="optional project label")
+    p_add.add_argument("--owner", default=None, help="who holds it (default: unowned)")
+    p_add.set_defaults(func=cmd_add)
+
+    p_status = sub.add_parser("status", help="Change an item's status (done needs proof first)")
+    p_status.add_argument("id", help="item id, e.g. L-0001")
+    p_status.add_argument("new_status", choices=VALID_STATUSES)
+    p_status.set_defaults(func=cmd_status)
+
+    p_proof = sub.add_parser("proof", help="Attach proof: ledger proof <id> <type> <ref>")
+    p_proof.add_argument("id")
+    p_proof.add_argument("type", help="kind of proof: file, report, commit, url, deploy, test, ...")
+    p_proof.add_argument("ref", help="where to find it: a path, hash or link")
+    p_proof.add_argument("--note", default=None, help="optional one-line comment")
+    p_proof.set_defaults(func=cmd_proof)
+
+    p_ack = sub.add_parser("ack", help="Record that the operator has seen an item")
+    p_ack.add_argument("id")
+    p_ack.set_defaults(func=cmd_ack)
+
+    p_claim = sub.add_parser("claim", help="Set an item's owner (you, or the named owner, now hold it)")
+    p_claim.add_argument("id")
+    p_claim.add_argument("owner")
+    p_claim.set_defaults(func=cmd_owner, action="claim")
+
+    p_release = sub.add_parser("release", help="Clear an item's owner back to unowned")
+    p_release.add_argument("id")
+    p_release.set_defaults(func=cmd_owner, action="release")
+
+    p_reassign = sub.add_parser("reassign", help="Hand an item to a different owner")
+    p_reassign.add_argument("id")
+    p_reassign.add_argument("owner")
+    p_reassign.set_defaults(func=cmd_owner, action="reassign")
+
+    p_note = sub.add_parser("note", help="Attach a free-text note without changing status")
+    p_note.add_argument("id")
+    p_note.add_argument("text")
+    p_note.set_defaults(func=cmd_note)
+
+    p_reviewed = sub.add_parser("reviewed", help="Mark an item's schema issues reviewed (needs --note)")
+    p_reviewed.add_argument("id")
+    p_reviewed.add_argument("--note", required=True, help="why the issues are settled")
+    p_reviewed.set_defaults(func=cmd_reviewed)
+
+    p_list = sub.add_parser("list", help="List items")
+    p_list.add_argument("--status", choices=VALID_STATUSES, default=None)
+    p_list.add_argument("--json", action="store_true", help="machine-readable output")
+    p_list.set_defaults(func=cmd_list)
+
+    p_surface = sub.add_parser("surface", help="Print items that need attention now")
+    p_surface.set_defaults(func=cmd_surface)
+
+    p_banner = sub.add_parser("banner", help="Print the short status banner")
+    p_banner.set_defaults(func=cmd_banner)
+
+    p_triage = sub.add_parser("triage", help="Set an item's triage class: ledger triage <id> <class> [--size S]")
+    p_triage.add_argument("id")
+    p_triage.add_argument("klass", metavar="class", help="urgent, important or low-hanging (anything else counts as unclassified)")
+    p_triage.add_argument("--size", default=None, help="optional size label, e.g. S, M, L")
+    p_triage.set_defaults(func=cmd_triage)
+
+    p_mix = sub.add_parser("mix", help="Print the law-mix: items per triage class")
+    p_mix.add_argument("--json", action="store_true", help="machine-readable output")
+    p_mix.set_defaults(func=cmd_mix)
+
+    return p
+
+
+def main() -> int:
+    parser = build_parser()
+    args = parser.parse_args()
+    if not getattr(args, "command", None):
+        parser.print_help()
+        return 0
+    try:
+        return args.func(args)
+    except ValueError as exc:
+        print(f"ledger: {exc} (file: {LEDGER_PATH})", file=sys.stderr)
+        return 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())

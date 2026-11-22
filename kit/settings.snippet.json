@@ -1,0 +1,23 @@
+{
+  "_comment": "Merge the hooks you want into ~/.claude/settings.json yourself. Nothing here edits your settings. Keep your existing hooks; add these entries to the same event arrays. Remove the _comment key.",
+  "hooks": {
+    "UserPromptSubmit": [
+      {"hooks": [{"type": "command", "command": "python3 ~/.claude/hubkit/ledger/ledger-banner-hook.py"}]}
+    ],
+    "SubagentStop": [
+      {"hooks": [{"type": "command", "command": "python3 ~/.claude/hubkit/report-gate/report-gate.py"}]}
+    ],
+    "PreToolUse": [
+      {"matcher": "Agent|Task|Workflow",
+       "hooks": [{"type": "command", "command": "python3 ~/.claude/hubkit/model-guard/model-guard.py"}]},
+      {"matcher": "Agent|Task",
+       "hooks": [{"type": "command", "command": "python3 ~/.claude/hubkit/dup-worker-check/dup-worker-hook.py"}]}
+    ],
+    "PreCompact": [
+      {"hooks": [{"type": "command", "command": "python3 ~/.claude/hubkit/memory/pre_compact_stub.py"}]}
+    ],
+    "SessionStart": [
+      {"hooks": [{"type": "command", "command": "python3 ~/.claude/hubkit/memory/compact_pickup.py"}]}
+    ]
+  }
+}

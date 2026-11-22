@@ -1,0 +1,24 @@
+{
+  "name": "groomer",
+  "core": false,
+  "summary": "Plain-rule tidy-up of a new to-do item: writes a finish line when none is given, suggests kind and grade, finds repeats among open machine-made items. No model call; kill switch and shadow mode.",
+  "files": [
+    "groomer.py"
+  ],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (mode files live in $HUBKIT_HOME/state)",
+    "GROOM_STATE_DIR": "optional: use this folder for the mode files and the counts log",
+    "MACHINE_SOURCES": "optional: comma list of sources that are machines, default alarm,worker-followup,gate-note",
+    "PROTECTED_SOURCES": "optional: comma list of sources that are people, never folded, default operator-chat,operator-tap,inbound-mail"
+  },
+  "needs": [
+    "python3 (3.9 or newer)"
+  ],
+  "depends_on": [],
+  "pairs_well_with": [
+    "ledger",
+    "verify-watch"
+  ],
+  "test": "bash patterns/groomer/test.sh"
+}

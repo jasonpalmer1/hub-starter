@@ -1,0 +1,15 @@
+{
+  "name": "gate-metrics",
+  "core": false,
+  "summary": "Read-only numbers from gate verdict files (VERDICT.md) and the gate-spawns index that model-guard writes: first-gate FAIL share and spawn counts.",
+  "files": ["gate_metrics.py"],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (verdicts under bug-gate/, index in state/gate-spawns.jsonl)",
+    "GATE_SPAWNS_LOG": "optional index file; model-guard writes it, gate-metrics reads it"
+  },
+  "needs": ["python3 (3.9 or newer)"],
+  "depends_on": [],
+  "pairs_well_with": ["model-guard", "gate-agents"],
+  "test": "bash patterns/gate-metrics/test.sh"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "doctor",
+  "core": true,
+  "summary": "One read-only command that checks the hub is wired and healthy, and prints the exact fix for anything that is not.",
+  "files": ["doctor.py"],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit",
+    "LEDGER_PATH": "optional: ledger file to check instead of $HUBKIT_HOME/state/ledger.jsonl",
+    "DISK_GUARD_WARN_GI": "WARN below this many GiB free, default 20",
+    "DISK_GUARD_CRIT_GI": "FAIL below this many GiB free, default 5",
+    "DOCTOR_SETTINGS": "optional: settings file to check instead of ~/.claude/settings.json"
+  },
+  "needs": ["python3 (3.9 or newer)", "macOS or Linux"],
+  "depends_on": [],
+  "test": "bash patterns/doctor/test.sh"
+}

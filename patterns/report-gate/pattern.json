@@ -1,0 +1,20 @@
+{
+  "name": "report-gate",
+  "core": true,
+  "summary": "Blocks a worker from finishing until its report file exists and has content.",
+  "files": ["report-gate.py"],
+  "hooks": [
+    {
+      "event": "SubagentStop",
+      "command": "python3 $HUBKIT_HOME/report-gate/report-gate.py"
+    }
+  ],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (reports go under $HUBKIT_HOME/reports)",
+    "REPORT_GATE_LOG_ALL": "set to 1 to log allowed stops too (blocks are always logged)",
+    "REPORT_GATE_PROJECTS_ROOT": "where Claude Code keeps transcripts, default ~/.claude/projects"
+  },
+  "needs": ["python3 (3.9 or newer)", "macOS or Linux (uses fcntl; Windows needs WSL)"],
+  "depends_on": [],
+  "test": "bash patterns/report-gate/test.sh"
+}

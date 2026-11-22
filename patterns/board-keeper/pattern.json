@@ -1,0 +1,28 @@
+{
+  "name": "board-keeper",
+  "core": false,
+  "summary": "Keeps a card board honest against the to-do list with plain code: closes cards whose items are all closed, moves cards forward on work signals, flags the odd ones, with daily caps, a kill switch, a move log and undo.",
+  "files": [
+    "board_keeper.py"
+  ],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (board.json, items.json and board-keeper/ live in $HUBKIT_HOME/state)",
+    "BK_BOARD": "optional: board file",
+    "BK_ITEMS": "optional: items file",
+    "BK_STATE_DIR": "optional: log, move log, flags and kill switch folder",
+    "BK_LIVE_OWNERS": "optional: file listing live worker names",
+    "BK_CAP": "optional: to-done fixes per day, default 25",
+    "BK_MOVE_CAP": "optional: moves of any kind per day, default 100"
+  },
+  "needs": [
+    "python3 (3.9 or newer)"
+  ],
+  "depends_on": [],
+  "pairs_well_with": [
+    "ledger",
+    "verify-watch",
+    "work-loop"
+  ],
+  "test": "bash patterns/board-keeper/test.sh"
+}

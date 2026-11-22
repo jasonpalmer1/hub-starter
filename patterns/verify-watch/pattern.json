@@ -1,0 +1,24 @@
+{
+  "name": "verify-watch",
+  "core": false,
+  "summary": "A strict one-line grammar for proving a finished item is really live (VERIFY: url=... has=\"...\"), an allowlist of hosts, and an emit check that refuses lines that would pass on any page.",
+  "files": [
+    "verify_watch.py"
+  ],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (allowlist: $HUBKIT_HOME/verify-hosts.txt)",
+    "VERIFY_HOSTS": "optional: use this allowlist file instead",
+    "VERIFY_TZ": "optional: IANA time zone for the per-day cap, default UTC",
+    "VERIFY_NO_SOURCES": "optional: comma list of sources that never get a suggested line, default inbound-mail"
+  },
+  "needs": [
+    "python3 (3.9 or newer)"
+  ],
+  "depends_on": [],
+  "pairs_well_with": [
+    "groomer",
+    "ledger"
+  ],
+  "test": "bash patterns/verify-watch/test.sh"
+}

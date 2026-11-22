@@ -1,0 +1,3 @@
+# History baseline for tools/prepush-check.sh. One full commit id, the last commit a person reviewed.
+# No pin yet: the published history is one commit, so the scan judges ALL of it (a missing pin falls back to the full scan).
+# When history grows, a reviewer may pin the last reviewed commit id on its own line below, and update the pin in test_scan.py.

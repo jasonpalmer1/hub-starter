@@ -1,0 +1,20 @@
+{
+  "name": "ledger",
+  "core": true,
+  "summary": "Append-only to-do list where an item cannot be closed without proof.",
+  "files": ["ledger", "ledger_lib.py", "ledger-banner-hook.py"],
+  "hooks": [
+    {
+      "event": "UserPromptSubmit",
+      "command": "python3 $HUBKIT_HOME/ledger/ledger-banner-hook.py"
+    }
+  ],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit",
+    "LEDGER_PATH": "optional: use this file instead of $HUBKIT_HOME/state/ledger.jsonl",
+    "HUBKIT_BANNER_EXTRAS": "optional: a .py file whose prompt_lines(session_id, cwd) adds lines to the banner (default: banner_extras.py next to the hook)"
+  },
+  "needs": ["python3 (3.9 or newer)", "macOS or Linux (uses fcntl; Windows needs WSL)"],
+  "depends_on": [],
+  "test": "bash patterns/ledger/test.sh"
+}

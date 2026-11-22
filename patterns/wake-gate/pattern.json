@@ -1,0 +1,23 @@
+{
+  "name": "wake-gate",
+  "core": false,
+  "summary": "Decides whether a script may wake the operator: only a new critical finding (or a dead lane holding operator asks) wakes, once per key per 24 h; everything else is logged.",
+  "files": [
+    "wake_gate.py"
+  ],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (wake-seen.json and events.jsonl live in $HUBKIT_HOME/state)",
+    "WAKE_GATE_NOW": "tests only: fixed clock (epoch seconds)"
+  },
+  "needs": [
+    "python3 (3.9 or newer)",
+    "macOS or Linux (uses fcntl)"
+  ],
+  "depends_on": [],
+  "pairs_well_with": [
+    "work-loop",
+    "deadman"
+  ],
+  "test": "bash patterns/wake-gate/test.sh"
+}

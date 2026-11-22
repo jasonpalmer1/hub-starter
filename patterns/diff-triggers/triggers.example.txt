@@ -1,0 +1,6 @@
+id	trigger	check	source	replaces	mode
+a	changed:public/sw.js & unchanged:src/release.json	service worker changed without a release file bump (cache not bumped)	incident-a	the reviewer's by-hand "assets need a cache bump" hunt	observe
+b	added-line:scripts/test-list.txt	line added to the test list: check the list's size cap	incident-b	the reviewer's by-hand hunt for test-list growth	observe
+c	added-path:^[^/]+[.](tsx|jsx|css|html)$	new root-level UI file: run the owed-feed scan by hand	incident-c	the reviewer's by-hand hunt on new root UI files	observe
+d	none	merge check already run by your pre-gate script (a note-only row, matches nothing)	incident-d	-	observe
+e	changed:lib/round_cap.py	hunk touches the round cap code (the limits must not loosen)	incident-e	the by-hand cap-constant read in review briefs	observe

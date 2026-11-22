@@ -1,0 +1,20 @@
+{
+  "name": "turn-cap-builder",
+  "core": false,
+  "summary": "A builder agent with a tool-call cap: nudge at 90, hard stop at 115, handoff file instead of a resume.",
+  "files": ["turn-cap.py", "builder.md"],
+  "agents": ["builder.md"],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (reports allowed past the cap live in $HUBKIT_HOME/reports)",
+    "TURN_CAP_NUDGE": "tool calls before the nudge, default 90",
+    "TURN_CAP_BLOCK": "tool calls before the hard stop, default 115",
+    "TURN_CAP_EXEMPT": "comma list of agent types never capped, default bug-gate,playtester,planner",
+    "TURN_CAP_STATE_DIR": "where counters live, default $HUBKIT_HOME/state/turns",
+    "TURN_CAP_REPORTS_DIR": "folder that Write/Edit may still touch past the cap, default $HUBKIT_HOME/reports"
+  },
+  "needs": ["python3 (3.9 or newer)"],
+  "depends_on": [],
+  "notes": "The hooks are declared in builder.md's own frontmatter, so nothing is added to settings.json.",
+  "test": "bash patterns/turn-cap-builder/test.sh"
+}

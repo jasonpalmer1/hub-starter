@@ -1,0 +1,27 @@
+{
+  "name": "memory",
+  "core": true,
+  "summary": "Three-tier memory: a short router file loaded every session, per-project session memory, and an archive plus one log per session; /log and /checkpoint commands; a pre-compact stub hook.",
+  "files": ["memory_init.py", "pre_compact_stub.py", "compact_pickup.py", "MEMORY.template.md", "ARCHIVE.template.md", "conversations_index.template.md", "MEMORY-RULES.md", "log.md", "checkpoint.md"],
+  "commands": ["log.md", "checkpoint.md"],
+  "hooks": [
+    {
+      "event": "PreCompact",
+      "command": "python3 $HUBKIT_HOME/memory/pre_compact_stub.py"
+    },
+    {
+      "event": "SessionStart",
+      "command": "python3 $HUBKIT_HOME/memory/compact_pickup.py"
+    }
+  ],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (compact stubs are written under it)",
+    "MEMORY_DIR": "absolute path of the memory folder; default ~/.claude/projects/<folder slug>/memory",
+    "TICKET_RE": "optional pattern for a ticket id in the stub, default L- plus four digits"
+  },
+  "needs": ["python3 (3.9 or newer)"],
+  "depends_on": [],
+  "pairs_well_with": ["ledger"],
+  "notes": "Run python3 ~/.claude/hubkit/memory/memory_init.py once to create MEMORY.md, ARCHIVE.md, conversations_index.md and conversations/. Commands are copied to ~/.claude/commands only if the name is free.",
+  "test": "bash patterns/memory/test.sh"
+}

@@ -1,0 +1,17 @@
+{
+  "name": "disk-guard",
+  "core": false,
+  "summary": "A read-only check that says whether there is enough free disk to start a build, before the disk fills and writes start failing.",
+  "files": ["disk-guard.py"],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (the log goes under $HUBKIT_HOME/state)",
+    "DISK_GUARD_WARN_GI": "WARN below this many GiB free, default 20",
+    "DISK_GUARD_CRIT_GI": "CRIT below this many GiB free, default 5",
+    "DISK_GUARD_PATH": "check the disk holding this folder, default $HUBKIT_HOME or your home",
+    "DISK_GUARD_LOG": "log file, default $HUBKIT_HOME/state/disk-guard.log"
+  },
+  "needs": ["python3 (3.9 or newer)", "macOS or Linux"],
+  "depends_on": [],
+  "test": "bash patterns/disk-guard/test.sh"
+}

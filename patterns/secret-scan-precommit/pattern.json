@@ -1,0 +1,16 @@
+{
+  "name": "secret-scan-precommit",
+  "core": true,
+  "summary": "A git pre-commit check that refuses a commit adding a key, a password, or a secrets file, and never prints the value.",
+  "files": ["secret-scan.py", "install-hook.sh"],
+  "hooks": [],
+  "git_hook": "pre-commit, wired into one repo at a time by install-hook.sh (never into settings.json)",
+  "env": {
+    "SECRET_SCAN_VALUE_FILES": "optional: colon-separated notes files whose key-like values must never be committed",
+    "SECRET_SCAN_ENV_ROOTS": "optional: colon-separated folders whose .env files are read for secret values, default the repo being committed",
+    "SECRET_SCAN_ALLOW_PATHS": "optional: colon-separated repo paths that hold made-up secret-shaped fixtures on purpose"
+  },
+  "needs": ["python3 (3.9 or newer)", "git"],
+  "depends_on": [],
+  "test": "bash patterns/secret-scan-precommit/test.sh"
+}

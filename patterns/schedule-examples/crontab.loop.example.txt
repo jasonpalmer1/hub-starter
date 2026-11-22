@@ -1,0 +1,12 @@
+# EXAMPLE (Linux, macOS, or WSL2 Ubuntu on Windows): the four lines that keep the work loop going.
+# Edit with: crontab -e   (paste everything below the notify line)
+# These four lines are the same as in docs/ALWAYS-RUNNING.md, word for word.
+#
+# To get a message when an alarm fires, remove the # in front of the next line and give the full path to
+# your own script (cron does not pass your shell's environment). On WSL2 see notify-windows.example.sh.
+# HUBKIT_NOTIFY_CMD=/full/path/to/your-notify-script
+#
+*/10 * * * * python3 $HOME/.claude/hubkit/work-loop/work_loop.py tick
+*/30 * * * * python3 $HOME/.claude/hubkit/sweep/sweep.py sweep
+*/30 * * * * python3 $HOME/.claude/hubkit/failure-register/failure_register.py
+*/15 * * * * python3 $HOME/.claude/hubkit/deadman/deadman.py check --all

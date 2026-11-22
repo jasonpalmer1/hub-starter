@@ -1,0 +1,8 @@
+{
+  "_comment": "OFF BY DEFAULT. The install never adds this. To turn the Stop arm on, merge the Stop entry into ~/.claude/settings.json yourself in a fresh session (never edit settings of a running session), register each lane with `work_loop.py lane add NAME`, and start each chat with HUBKIT_LANE=NAME. To pause it at any time: touch ~/.claude/hubkit/state/loop-pause. Remove the _comment key.",
+  "hooks": {
+    "Stop": [
+      {"hooks": [{"type": "command", "command": "python3 ~/.claude/hubkit/work-loop/stop_arm.py"}]}
+    ]
+  }
+}

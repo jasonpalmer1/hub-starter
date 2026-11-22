@@ -1,0 +1,30 @@
+{
+  "name": "improve",
+  "core": false,
+  "summary": "The empty-queue policy: when nothing is queued, turns only measured problems (a repeat failure, a missed target, a failing smoke test found by the bug sweep) into a few capped ticket candidates with evidence, and closes them only on a before/after reading it takes itself.",
+  "files": [
+    "improve.py",
+    "bug_sweep.py"
+  ],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (reads state/failure-register.md and state/targets.json, writes state/improve-candidates.jsonl, improve-readings.jsonl, improve.tick; bug_sweep.py reads state/projects.json and writes state/bugsweep/NAME.txt, bugsweep-covered.jsonl, bug-sweep.tick)",
+    "LEDGER_PATH": "optional: use this ledger file instead of $HUBKIT_HOME/state/ledger.jsonl",
+    "IMPROVE_NOW": "tests only: fixed clock (epoch seconds)"
+  },
+  "needs": [
+    "python3 (3.9 or newer)",
+    "macOS or Linux (uses fcntl)",
+    "the ledger pattern installed next to it"
+  ],
+  "depends_on": [
+    "ledger"
+  ],
+  "pairs_well_with": [
+    "failure-register",
+    "work-loop",
+    "wake-gate",
+    "deadman"
+  ],
+  "test": "bash patterns/improve/test.sh"
+}

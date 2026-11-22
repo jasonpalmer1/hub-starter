@@ -1,0 +1,22 @@
+{
+  "name": "model-guard",
+  "core": false,
+  "summary": "Refuses any subagent call that does not name its model, so helpers never silently inherit the main chat's model.",
+  "files": ["model-guard.py", "gate_round_cap.py", "selfcheck_admit.py"],
+  "hooks": [
+    {
+      "event": "PreToolUse",
+      "matcher": "Agent|Task|Workflow",
+      "command": "python3 $HUBKIT_HOME/model-guard/model-guard.py"
+    }
+  ],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit",
+    "MODEL_GUARD_ALLOWED": "optional comma list of allowed models, e.g. haiku,sonnet",
+    "MODEL_GUARD_LOG": "optional log file, default $HUBKIT_HOME/state/model-guard.log",
+    "MODEL_GUARD_REPORT_CHECK": "set to 0 to switch off the optional report-path rule (needs the report-gate pattern)"
+  },
+  "needs": ["python3 (3.9 or newer)"],
+  "depends_on": [],
+  "test": "bash patterns/model-guard/test.sh"
+}

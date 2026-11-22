@@ -1,0 +1,13 @@
+{
+  "name": "schedule-examples",
+  "core": false,
+  "summary": "Copy-and-edit launchd and cron files that run a job and the deadman watcher that notices when the job stops.",
+  "files": ["launchd-job.plist.example", "launchd-deadman-check.plist.example", "crontab.example.txt", "crontab.loop.example.txt", "windows-keepalive.task.xml", "notify-windows.example.sh"],
+  "hooks": [],
+  "env": {
+    "HUBKIT_NOTIFY_CMD": "optional, set it in the crontab (cron does not pass your shell's environment)"
+  },
+  "needs": ["python3 (3.9 or newer)", "macOS (launchd) or any system with cron (WSL2 Ubuntu on Windows 11 counts)"],
+  "depends_on": ["deadman"],
+  "test": "bash patterns/schedule-examples/test.sh"
+}

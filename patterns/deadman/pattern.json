@@ -1,0 +1,15 @@
+{
+  "name": "deadman",
+  "core": true,
+  "summary": "Raises one alarm when a scheduled job has quietly stopped, by checking that it keeps proving it is alive.",
+  "files": ["deadman.py"],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (heartbeats and alarms go under $HUBKIT_HOME/state)",
+    "HUBKIT_NOTIFY_CMD": "optional command run as: CMD \"<title>\" \"<reason>\" when an alarm fires",
+    "DEADMAN_NOW": "tests only: epoch seconds that replace the clock"
+  },
+  "needs": ["python3 (3.9 or newer)", "macOS or Linux"],
+  "depends_on": [],
+  "test": "bash patterns/deadman/test.sh"
+}

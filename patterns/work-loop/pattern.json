@@ -1,0 +1,30 @@
+{
+  "name": "work-loop",
+  "core": false,
+  "summary": "Hands an idle lane its next ticket from the ledger and keeps lanes fed on a schedule (tick): idle, rate-limit and hold guards, file or command delivery, starvation finding, heartbeat. An optional Stop hook (off by default) continues a registered lane with its next ticket, capped at 3.",
+  "files": [
+    "work_loop.py",
+    "stop_arm.py"
+  ],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (lanes.json and loop-feed.json live in $HUBKIT_HOME/state)",
+    "LEDGER_PATH": "optional: read this ledger file instead of $HUBKIT_HOME/state/ledger.jsonl",
+    "WORK_LOOP_NOW": "tests only: fixed clock (epoch seconds)",
+    "HUBKIT_LANE": "this chat's lane name; only the optional Stop arm (stop_arm.py) reads it"
+  },
+  "needs": [
+    "python3 (3.9 or newer)",
+    "macOS or Linux (uses fcntl)",
+    "the ledger pattern installed next to it"
+  ],
+  "depends_on": [
+    "ledger"
+  ],
+  "pairs_well_with": [
+    "lane-lock",
+    "deadman",
+    "wake-gate"
+  ],
+  "test": "bash patterns/work-loop/test.sh"
+}

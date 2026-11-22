@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# Refuses a commit or merge commit unless git would record the kit identity (hub-starter) as author and committer.
+exec python3 "$(cd "$(dirname "$0")/../.." && pwd)/tools/scan.py" --guard-identity

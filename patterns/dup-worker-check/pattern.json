@@ -1,0 +1,23 @@
+{
+  "name": "dup-worker-check",
+  "core": false,
+  "summary": "Stops a second worker from starting on a ticket a live worker already holds.",
+  "files": ["dup-worker-check.py", "dup-worker-hook.py"],
+  "hooks": [
+    {
+      "event": "PreToolUse",
+      "matcher": "Agent|Task",
+      "command": "python3 $HUBKIT_HOME/dup-worker-check/dup-worker-hook.py"
+    }
+  ],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit",
+    "DUP_PROJECTS_ROOT": "where Claude Code keeps transcripts, default ~/.claude/projects",
+    "DUP_LIVE_MIN": "minutes of silence before a worker counts as not live, default 15",
+    "DUP_TICKET_RE": "optional pattern for a ticket id, default L- plus four digits (what the ledger hands out)"
+  },
+  "needs": ["python3 (3.9 or newer)"],
+  "depends_on": [],
+  "pairs_well_with": ["ledger"],
+  "test": "bash patterns/dup-worker-check/test.sh"
+}

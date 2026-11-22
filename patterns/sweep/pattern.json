@@ -1,0 +1,29 @@
+{
+  "name": "sweep",
+  "core": false,
+  "summary": "Reports stale tickets and tickets owned by a dead lane through wake-gate, and puts a dead lane's tickets back in the queue; unknown liveness never takes a ticket away.",
+  "files": [
+    "sweep.py"
+  ],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (live-owners.txt, holds/ and events.jsonl live in $HUBKIT_HOME/state)",
+    "LEDGER_PATH": "optional: read this ledger file instead of $HUBKIT_HOME/state/ledger.jsonl",
+    "SWEEP_LIVE_OWNERS": "optional: path of the live-owner list instead of $HUBKIT_HOME/state/live-owners.txt",
+    "SWEEP_NOW": "tests only: fixed clock (epoch seconds)"
+  },
+  "needs": [
+    "python3 (3.9 or newer)",
+    "macOS or Linux (uses fcntl)",
+    "the ledger pattern installed next to it",
+    "a script of yours that writes the live-owner list (format in README)"
+  ],
+  "depends_on": [
+    "ledger"
+  ],
+  "pairs_well_with": [
+    "wake-gate",
+    "work-loop"
+  ],
+  "test": "bash patterns/sweep/test.sh"
+}

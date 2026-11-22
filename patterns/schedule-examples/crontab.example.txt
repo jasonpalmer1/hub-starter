@@ -1,0 +1,17 @@
+# EXAMPLE (Linux or macOS): the same two pieces with cron. Edit with: crontab -e
+# Replace YOUR_JOB_COMMAND with your job, and my-job / 25h with a job name and a
+# little more than its schedule. cron has a very short PATH, so use full paths for
+# your own commands.
+#
+# To get a message when an alarm fires, add a line like this ABOVE the jobs (cron does not
+# pass your shell's environment to jobs):
+# HUBKIT_NOTIFY_CMD=/full/path/to/your-notify-script
+#
+# 1) The job. The beat after && runs only if the job exits 0. Do not use ; here,
+#    it would beat even when the job failed.
+0 3 * * * YOUR_JOB_COMMAND && python3 $HOME/.claude/hubkit/deadman/deadman.py beat my-job --max-age 25h
+#
+# 2) The watcher, every 15 minutes. Its own cron line, separate from the job. Output
+#    goes to a log; the alarm itself lands in the hubkit alarms log (and your notify
+#    command, if you set HUBKIT_NOTIFY_CMD).
+*/15 * * * * python3 $HOME/.claude/hubkit/deadman/deadman.py check --all >> $HOME/.claude/hubkit/state/deadman-check.log 2>&1

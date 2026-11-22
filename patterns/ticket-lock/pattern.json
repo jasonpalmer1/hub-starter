@@ -1,0 +1,20 @@
+{
+  "name": "ticket-lock",
+  "core": false,
+  "summary": "One owner per ticket: a second worker for a held ticket is refused until the first finishes, a handoff is written, or the lock expires.",
+  "files": ["ticket_lock.py", "ticket-lock.py"],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit",
+    "TICKET_LOCK_DIR": "where lock files live, default $HUBKIT_HOME/state/ticket-locks",
+    "TICKET_LOCK_ALARM_LOG": "where handoff and mismatch alarms are appended, default $HUBKIT_HOME/state/ticket-alarms.log",
+    "TICKET_LOCK_TTL_S": "seconds before a lock counts as expired, default 3600",
+    "TICKET_LOCK_ID_RE": "optional pattern for a ticket id, default L- plus four digits",
+    "TICKET_LOCK_PROJECTS_GLOB": "where subagent transcripts live (a test seam; {sid} is the session id), default ~/.claude/projects/*/{sid}/subagents/agent-*.jsonl",
+    "TICKET_LOCK_SESSION_GLOB": "where the claiming session's own transcript lives (a test seam; {sid} is the session id), default ~/.claude/projects/*/{sid}.jsonl"
+  },
+  "needs": ["python3 (3.9 or newer)"],
+  "depends_on": [],
+  "pairs_well_with": ["model-guard", "report-gate", "ledger"],
+  "test": "bash patterns/ticket-lock/test.sh"
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  EXAMPLE (macOS): run one of your jobs every night and record that it succeeded.
+  1. Copy to ~/Library/LaunchAgents/com.example.hubkit.my-job.plist
+  2. Replace __HOME__ with your home folder, YOUR_JOB_COMMAND with your job,
+     and my-job / 25h with a job name and a little more than its schedule.
+  3. launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.example.hubkit.my-job.plist
+  The beat runs only if the job exits 0 (that is what && means).
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.example.hubkit.my-job</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/sh</string>
+        <string>-c</string>
+        <string>YOUR_JOB_COMMAND &amp;&amp; /usr/bin/python3 __HOME__/.claude/hubkit/deadman/deadman.py beat my-job --max-age 25h</string>
+    </array>
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>3</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+    <key>StandardOutPath</key>
+    <string>__HOME__/.claude/hubkit/state/my-job.log</string>
+    <key>StandardErrorPath</key>
+    <string>__HOME__/.claude/hubkit/state/my-job.log</string>
+</dict>
+</plist>

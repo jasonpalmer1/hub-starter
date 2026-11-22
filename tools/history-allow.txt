@@ -1,0 +1,10 @@
+# Blobs in git history that the scanner flags but a person reviewed and accepted. One full 40-char blob
+# id per line, then the reason. Matching is by exact content hash, so any change to the blob un-waives it.
+# History cannot be edited after the fact; a blob you cannot fix belongs here only if it holds nothing private.
+4d0a9382a3290058dc10a2bb5c67ba90168101bb generic placeholder home path in a mutation-test line of gate-agents/test.sh; later commits split it
+60d0fd1ae1879572d1ce4dd00be3870efeef9f3e ordinary prose: a plain word in a bullet list that equals a local folder name
+ebe1b0190334ccc6fd95e47c33ae5a71e5367bc2 ordinary prose: a plain word in a docs note that equals a local folder name
+e53f1184a3205333557a94f94cf46ce80e9fdfbd kit test list of banned strings, public build-tool name, assembled in pieces
+fb5c93793107bf8e7e2f1f4ea0271c08b6f2a87e kit test list of banned strings, public build-tool name
+508aaaf207c9f6147f5a43557312f5d970370d85 fixture ticket ids in a model-guard test; later blob uses in-range fixture ids, no private data
+feb53ce5ece6bd4dde2a654a013f9428e602bd1d fixture ticket ids in a model-guard test; later blob uses in-range fixture ids, no private data

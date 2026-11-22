@@ -1,0 +1,14 @@
+{
+  "name": "diff-triggers",
+  "core": false,
+  "summary": "Observe-only review helpers: a table of past-incident checks that fire when a diff matches, and a base-commit reader so a change cannot edit the rules it is reviewed by.",
+  "files": ["trigger_check.py", "base_read.py", "triggers.example.txt"],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (rows table at triggers/triggers.tsv, optional log under state/trigger-check/)"
+  },
+  "needs": ["python3 (3.9 or newer)", "git"],
+  "depends_on": [],
+  "pairs_well_with": ["gate-agents"],
+  "test": "bash patterns/diff-triggers/test.sh"
+}

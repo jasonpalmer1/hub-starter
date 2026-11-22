@@ -1,0 +1,19 @@
+{
+  "name": "lane-lock",
+  "core": false,
+  "summary": "One owner per lane (a repo or scope) at a time, plus a circuit breaker that stops new work on a lane whose last gate checks both failed.",
+  "files": ["lane-lock.py"],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (claims and breakers go under $HUBKIT_HOME/state/lanes)",
+    "LANE_LOCK_ROOT": "optional: folder for lane records, default $HUBKIT_HOME/state/lanes",
+    "LANE_LOCK_ALARMS_LOG": "optional: alarm log, default $HUBKIT_HOME/state/alarms.log",
+    "LANE_BREAKER_THRESHOLD": "consecutive FAILs that trip the breaker, default 2",
+    "LANE_LOCK_REPORTS": "optional: folder holding cited judge rulings (judge/<name>.md, <ticket>/judge-r<N>.md), default $HUBKIT_HOME/reports",
+    "LANE_LOCK_WAIT_S": "seconds to wait for the short per-lane lock, default 5"
+  },
+  "needs": ["python3 (3.9 or newer)", "macOS or Linux (uses ps and process ids)"],
+  "depends_on": [],
+  "pairs_well_with": ["deadman", "doctor"],
+  "test": "bash patterns/lane-lock/test.sh"
+}

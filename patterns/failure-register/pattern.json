@@ -1,0 +1,23 @@
+{
+  "name": "failure-register",
+  "core": false,
+  "summary": "Read-only register of failures that keep coming back: groups failures by job, step and reason with times, ids and paths removed, and lists any signature seen in 3 or more separate incidents. Never opens a ticket.",
+  "files": [
+    "failure_register.py",
+    "record_failure.py"
+  ],
+  "hooks": [],
+  "env": {
+    "HUBKIT_HOME": "install root, default ~/.claude/hubkit (reads $HUBKIT_HOME/state/failures.jsonl, writes failure-register.md and failure-register.tick beside it)"
+  },
+  "needs": [
+    "python3 (3.9 or newer)"
+  ],
+  "depends_on": [],
+  "pairs_well_with": [
+    "wake-gate",
+    "deadman",
+    "work-loop"
+  ],
+  "test": "bash patterns/failure-register/test.sh"
+}
